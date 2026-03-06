@@ -1,4 +1,4 @@
-# Budget App
+# Budget Lily
 
 Budgeting and spending analysis web app with:
 
