@@ -31,7 +31,7 @@ export default function UploadsPage() {
     <ProtectedRoute>
       <main className="mx-auto max-w-2xl px-6 pb-16">
         <h1 className="mb-2 text-3xl font-semibold tracking-tight">Upload Statements</h1>
-        <p className="mb-8 text-sm text-[#86868b]">Import CSV bank statements.</p>
+        <p className="mb-8 text-sm text-[#86868b]">Import CSV or PDF bank statements.</p>
         <div className="card">
           <form className="space-y-4" onSubmit={onUpload}>
             <div>
