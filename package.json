@@ -1,12 +1,16 @@
 {
   "name": "budget-app",
   "version": "1.0.0",
-  "description": "app to make a budget",
-  "license": "ISC",
-  "author": "Rob Stretch\\",
-  "type": "commonjs",
-  "main": "app.js",
+  "private": true,
+  "description": "Budgeting and spending analysis monorepo",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "build": "npm run build --prefix frontend",
+    "start": "concurrently \"npm run start --prefix backend\" \"npm run start --prefix frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
   }
 }
