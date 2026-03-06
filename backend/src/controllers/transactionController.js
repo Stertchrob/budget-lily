@@ -1,4 +1,5 @@
 const { supabaseAdmin } = require("../services/supabaseService");
+const { getAliasMap, applyAliases } = require("../services/merchantAliasService");
 
 async function listTransactions(req, res, next) {
   try {
@@ -9,9 +10,10 @@ async function listTransactions(req, res, next) {
     if (to) query = query.lt("transaction_date", to);
     if (category) query = query.eq("category_name", category);
     if (batch) query = query.eq("statement_upload_id", batch);
-    const { data, error } = await query;
+    const [aliasMap, { data, error }] = await Promise.all([getAliasMap(userId), query]);
     if (error) throw error;
-    res.json({ data: data || [] });
+    const txns = applyAliases(data || [], aliasMap);
+    res.json({ data: txns });
   } catch (err) {
     next(err);
   }

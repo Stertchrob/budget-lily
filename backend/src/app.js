@@ -9,6 +9,7 @@ const batchRoutes = require("./routes/batchRoutes");
 const transactionRoutes = require("./routes/transactionRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const merchantAliasRoutes = require("./routes/merchantAliasRoutes");
 const { notFoundHandler, errorHandler } = require("./middleware/errorMiddleware");
 
 const app = express();
@@ -30,6 +31,7 @@ app.use("/api/batches", batchRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/merchant-aliases", merchantAliasRoutes);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
