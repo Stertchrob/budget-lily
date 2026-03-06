@@ -20,21 +20,21 @@ function formatCurrency(value) {
   }).format(Number(value || 0));
 }
 
-function OverviewCards({ totals }) {
+function OverviewCards({ averages }) {
   return (
     <div className="grid gap-6 sm:grid-cols-3">
       <div className="card">
-        <p className="text-xs uppercase text-[#86868b]">Total Expenses</p>
-        <p className="mt-2 text-3xl font-semibold">{formatCurrency(totals?.expenses)}</p>
+        <p className="text-xs uppercase text-[#86868b]">YTD Avg Spend / Month</p>
+        <p className="mt-2 text-3xl font-semibold">{formatCurrency(averages?.spendPerMonth)}</p>
       </div>
       <div className="card">
-        <p className="text-xs uppercase text-[#86868b]">Total Income</p>
-        <p className="mt-2 text-3xl font-semibold text-[#34c759]">{formatCurrency(totals?.income)}</p>
+        <p className="text-xs uppercase text-[#86868b]">YTD Avg Income / Month</p>
+        <p className="mt-2 text-3xl font-semibold text-[#34c759]">{formatCurrency(averages?.incomePerMonth)}</p>
       </div>
       <div className="card">
-        <p className="text-xs uppercase text-[#86868b]">Net Cash Flow</p>
-        <p className={`mt-2 text-3xl font-semibold ${totals?.netCashFlow >= 0 ? "text-[#1d1d1f]" : "text-[#ff3b30]"}`}>
-          {formatCurrency(totals?.netCashFlow)}
+        <p className="text-xs uppercase text-[#86868b]">YTD Avg Transactions / Month</p>
+        <p className="mt-2 text-3xl font-semibold text-[#1d1d1f]">
+          {Number(averages?.transactionsPerMonth || 0).toFixed(1)}
         </p>
       </div>
     </div>
@@ -135,12 +135,12 @@ function CategoryBreakdown({ categoryData, totalSpent }) {
   );
 }
 
-export default function ReportsCharts({ categoryData, trendData, totals, month }) {
-  const totalSpent = Number(totals?.expenses || 0);
+export default function ReportsCharts({ categoryData, trendData, averages }) {
+  const totalSpent = Number(averages?.spendPerMonth || 0);
 
   return (
     <div className="space-y-6">
-      <OverviewCards totals={totals} />
+      <OverviewCards averages={averages} />
       <TrendCard trendData={trendData} />
       <CategoryBreakdown categoryData={categoryData} totalSpent={totalSpent} />
     </div>

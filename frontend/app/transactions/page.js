@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import { apiGet, apiPatch, apiDelete } from "../../lib/apiClient";
 
-const CATEGORIES = ["Groceries", "Rent", "Dining", "Gas", "Utilities", "Subscriptions", "Shopping", "Transport", "Income", "Other"];
+const DEFAULT_CATEGORIES = ["Groceries", "Rent", "Dining", "Gas", "Utilities", "Subscriptions", "Shopping", "Transport", "Income", "Other"];
 
 function formatDate(iso) {
   if (!iso) return "";
@@ -14,6 +14,7 @@ function formatDate(iso) {
 
 export default function TransactionsPage() {
   const [batches, setBatches] = useState([]);
+  const [categories, setCategories] = useState(DEFAULT_CATEGORIES);
   const [expandedId, setExpandedId] = useState(null);
   const [transactionsByBatch, setTransactionsByBatch] = useState({});
   const [editingId, setEditingId] = useState(null);
@@ -28,8 +29,18 @@ export default function TransactionsPage() {
       .catch((e) => setError(e.message));
   }
 
+  function loadCategories() {
+    apiGet("/categories")
+      .then((r) => {
+        const customCategories = (r.data || []).map((category) => category.name).filter(Boolean);
+        setCategories(Array.from(new Set([...DEFAULT_CATEGORIES, ...customCategories])));
+      })
+      .catch((e) => setError(e.message));
+  }
+
   useEffect(() => {
     loadBatches();
+    loadCategories();
   }, []);
 
   async function loadTransactions(batchId) {
@@ -318,7 +329,7 @@ export default function TransactionsPage() {
                                     onChange={(e) => updateCategory(txn.id, e.target.value, batch.id)}
                                     className="min-w-[10rem] bg-white"
                                   >
-                                    {CATEGORIES.map((c) => (
+                                    {Array.from(new Set([...categories, txn.category_name || "Other"])).map((c) => (
                                       <option key={c} value={c}>{c}</option>
                                     ))}
                                   </select>

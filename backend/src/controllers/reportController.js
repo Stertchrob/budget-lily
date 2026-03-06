@@ -17,7 +17,7 @@ async function getOverviewReport(req, res, next) {
     ]);
     if (error) throw error;
     const txns = applyAliases(data || [], aliasMap);
-    res.json({ month, ...computeOverview(txns) });
+    res.json({ month, ...computeOverview(txns, month) });
   } catch (err) {
     next(err);
   }
