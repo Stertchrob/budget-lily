@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import ProtectedRoute from "../../components/ProtectedRoute";
-import NavBar from "../../components/NavBar";
 import { apiGet, apiPost } from "../../lib/apiClient";
 
 export default function SettingsPage() {
@@ -35,7 +34,6 @@ export default function SettingsPage() {
   return (
     <ProtectedRoute>
       <main className="mx-auto max-w-2xl px-6 pb-16">
-        <NavBar />
         <h1 className="mb-2 text-3xl font-semibold tracking-tight">Settings</h1>
         <p className="mb-8 text-sm text-[#86868b]">Manage custom categories.</p>
         <div className="card">

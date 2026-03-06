@@ -44,3 +44,4 @@ export const apiPatch = (path, payload) =>
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
+export const apiDelete = (path) => request(path, { method: "DELETE" });
