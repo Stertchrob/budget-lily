@@ -16,14 +16,29 @@ function formatMonthLabel(month) {
   return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }
 
-export default function SummaryHero({ totals, trendData, month }) {
+export default function SummaryHero({ totals, trendData, month, selectedMonth, maxMonth, onMonthChange }) {
   const sparklineData = (trendData || []).map((item) => ({ ...item, label: item.month.slice(5) }));
 
   return (
     <section className="overflow-hidden rounded-[32px] border border-white/70 bg-[linear-gradient(180deg,#fbfbfd_0%,#f3f4f8_100%)] p-7 shadow-[0_18px_60px_rgba(15,23,42,0.08)]">
       <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
         <div>
-          <p className="text-sm font-medium text-[#86868b]">{formatMonthLabel(month)}</p>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+            {onMonthChange ? (
+              <div className="w-full max-w-[14rem] rounded-3xl border border-white/80 bg-white/80 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur sm:ml-auto sm:w-auto">
+                <label className="mb-2 block text-xs font-medium uppercase tracking-[0.12em] text-[#86868b]">
+                  Dashboard month
+                </label>
+                <input
+                  type="month"
+                  value={selectedMonth}
+                  max={maxMonth}
+                  onChange={(e) => onMonthChange(e.target.value)}
+                  className="w-full bg-white"
+                />
+              </div>
+            ) : null}
+          </div>
           <h2 className="mt-2 max-w-xl text-4xl font-semibold tracking-[-0.03em] text-[#1d1d1f] sm:text-5xl">
             A calmer view of how your money moved.
           </h2>

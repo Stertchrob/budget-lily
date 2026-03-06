@@ -54,6 +54,16 @@ export default function SettingsPage() {
     }
   }
 
+  async function onDeleteCategory(categoryId) {
+    try {
+      await apiDelete(`/categories/${categoryId}`);
+      setMessage("Category deleted.");
+      loadCategories();
+    } catch (err) {
+      setMessage(err.message);
+    }
+  }
+
   async function onRenameMerchant(e) {
     e.preventDefault();
     if (!selectedMerchant || !displayName.trim()) return;
@@ -133,7 +143,17 @@ export default function SettingsPage() {
                 {categories.map((c) => (
                   <div key={c.id} className="flex items-center justify-between rounded-2xl bg-[#f5f5f7] px-4 py-3">
                     <span className="font-medium text-[#1d1d1f]">{c.name}</span>
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#86868b] shadow-sm">Custom</span>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#86868b] shadow-sm">Custom</span>
+                      <button
+                        type="button"
+                        onClick={() => onDeleteCategory(c.id)}
+                        className="rounded-full bg-white px-3 py-1 text-xs font-medium text-[#86868b] shadow-sm transition hover:text-[#ff3b30]"
+                        title="Delete category"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
