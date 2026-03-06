@@ -10,11 +10,50 @@ function pick(row, keys) {
   return "";
 }
 
-/** Fix unescaped quotes inside quoted CSV fields (e.g. "for "Golf Sim"" -> "for ""Golf Sim""") */
+/** Fix unescaped quotes inside quoted CSV fields without altering real closing quotes. */
 function fixMalformedQuotes(text) {
-  return text
-    .replace(/ "([A-Za-z])/g, ' ""$1')                 // "Golf -> ""Golf
-    .replace(/([a-zA-Z])"([ \t;])/g, '$1""$2');       // Sim"; or Sim" -> Sim"" (exclude newline/comma to avoid breaking Stretch"\n or FL",")
+  let result = "";
+  let inQuotedField = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    const char = text[i];
+    const next = text[i + 1];
+    const prev = text[i - 1];
+
+    if (char !== '"') {
+      result += char;
+      continue;
+    }
+
+    if (!inQuotedField) {
+      inQuotedField = true;
+      result += char;
+      continue;
+    }
+
+    if (next === '"') {
+      result += '""';
+      i += 1;
+      continue;
+    }
+
+    const isClosingQuote = next === "," || next === "\n" || next === "\r" || next === undefined;
+    if (isClosingQuote) {
+      inQuotedField = false;
+      result += char;
+      continue;
+    }
+
+    const looksLikeQuotedFieldStart = prev === "," || prev === "\n" || prev === "\r" || prev === undefined;
+    if (looksLikeQuotedFieldStart) {
+      result += char;
+      continue;
+    }
+
+    result += '""';
+  }
+
+  return result;
 }
 
 function findTransactionSection(text) {
