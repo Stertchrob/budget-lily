@@ -5,6 +5,7 @@ const { parseStatement } = require("../services/statementParserService");
 const { normalizeTransactions } = require("../services/transactionNormalizationService");
 const { dedupeTransactions } = require("../services/duplicateDetectionService");
 const { categorizeTransaction } = require("../services/categorizationService");
+const { getReviewedMerchantCategoryMap } = require("../services/reviewedMerchantCategoryService");
 
 async function uploadStatement(req, res, next) {
   try {
@@ -36,17 +37,25 @@ async function uploadStatement(req, res, next) {
       normalized = normalized.map((txn) => ({ ...txn, amount: -txn.amount }));
     }
 
-    const rows = normalized.map((txn) => ({
-      user_id: userId,
-      statement_upload_id: statement.data.id,
-      transaction_date: txn.transaction_date,
-      amount: txn.amount,
-      merchant: txn.merchant,
-      description: txn.description,
-      category_name: categorizeTransaction(txn),
-      category_edited: false,
-      raw_payload: txn.raw_payload,
-    }));
+    const reviewedCategoryMap = await getReviewedMerchantCategoryMap(
+      userId,
+      normalized.map((txn) => txn.merchant)
+    );
+
+    const rows = normalized.map((txn) => {
+      const reviewedCategory = reviewedCategoryMap[txn.merchant];
+      return {
+        user_id: userId,
+        statement_upload_id: statement.data.id,
+        transaction_date: txn.transaction_date,
+        amount: txn.amount,
+        merchant: txn.merchant,
+        description: txn.description,
+        category_name: reviewedCategory || categorizeTransaction(txn),
+        category_edited: Boolean(reviewedCategory),
+        raw_payload: txn.raw_payload,
+      };
+    });
 
     if (rows.length) {
       const inserted = await supabaseAdmin.from("transactions").insert(rows);
