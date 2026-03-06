@@ -4,10 +4,13 @@ create table if not exists public.statement_uploads (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null,
   file_name text not null,
+  name text,
   storage_path text not null unique,
   mime_type text,
   created_at timestamptz not null default now()
 );
+
+-- Add name column if table already exists: ALTER TABLE statement_uploads ADD COLUMN IF NOT EXISTS name text;
 
 create table if not exists public.transactions (
   id uuid primary key default gen_random_uuid(),
@@ -18,9 +21,12 @@ create table if not exists public.transactions (
   merchant text,
   description text not null,
   category_name text not null default 'Other',
+  category_edited boolean not null default false,
   raw_payload jsonb,
   created_at timestamptz not null default now()
 );
+
+-- Add category_edited if table exists: ALTER TABLE transactions ADD COLUMN IF NOT EXISTS category_edited boolean DEFAULT false;
 
 create table if not exists public.categories (
   id uuid primary key default gen_random_uuid(),

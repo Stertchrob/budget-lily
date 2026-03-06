@@ -1,5 +1,6 @@
 import "./globals.css";
 import { AuthProvider } from "../components/AuthProvider";
+import NavBar from "../components/NavBar";
 
 export const metadata = {
   title: "Budget Lily",
@@ -15,7 +16,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="min-h-screen antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <header className="px-4 pt-6 pb-4">
+            <NavBar />
+          </header>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

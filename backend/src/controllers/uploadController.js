@@ -20,15 +20,22 @@ async function uploadStatement(req, res, next) {
     });
     if (uploaded.error) throw uploaded.error;
 
+    const batchName = req.file.originalname || "Statement";
     const statement = await supabaseAdmin
       .from("statement_uploads")
-      .insert({ user_id: userId, file_name: req.file.originalname, storage_path: storagePath, mime_type: req.file.mimetype })
+      .insert({ user_id: userId, file_name: req.file.originalname, name: batchName, storage_path: storagePath, mime_type: req.file.mimetype })
       .select()
       .single();
     if (statement.error) throw statement.error;
 
     const parsed = await parseStatement(req.file);
-    const normalized = dedupeTransactions(normalizeTransactions(parsed));
+    let normalized = dedupeTransactions(normalizeTransactions(parsed));
+
+    const statementType = (req.body?.statementType || "debit").toLowerCase();
+    if (statementType === "credit") {
+      normalized = normalized.map((txn) => ({ ...txn, amount: -txn.amount }));
+    }
+
     const rows = normalized.map((txn) => ({
       user_id: userId,
       statement_upload_id: statement.data.id,
@@ -37,6 +44,7 @@ async function uploadStatement(req, res, next) {
       merchant: txn.merchant,
       description: txn.description,
       category_name: categorizeTransaction(txn),
+      category_edited: false,
       raw_payload: txn.raw_payload,
     }));
 

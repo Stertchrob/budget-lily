@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import ProtectedRoute from "../../components/ProtectedRoute";
-import NavBar from "../../components/NavBar";
 import { apiGet } from "../../lib/apiClient";
 
 export default function DashboardPage() {
@@ -14,7 +13,6 @@ export default function DashboardPage() {
   return (
     <ProtectedRoute>
       <main className="mx-auto max-w-6xl px-6 pb-16">
-        <NavBar />
         <h1 className="mb-2 text-3xl font-semibold tracking-tight">Dashboard</h1>
         <p className="mb-8 text-sm text-[#86868b]">Your spending at a glance.</p>
         {error ? <div className="mb-4 rounded-xl bg-[#fff5f5] p-3 text-sm text-[#ff3b30]">{error}</div> : null}
