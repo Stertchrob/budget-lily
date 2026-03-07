@@ -42,6 +42,50 @@ function getYearToDateAverageContext(transactions) {
   };
 }
 
+const NEEDS_CATEGORIES = new Set(["rent", "mortgage", "utilities", "gas", "transport"]);
+
+function getBudgetStatus(transactions, currentMonth) {
+  const currentMonthTransactions = transactions.filter(
+    (txn) => String(txn.transaction_date || "").slice(0, 7) === currentMonth
+  );
+
+  const currentMonthIncome = currentMonthTransactions
+    .filter((txn) => txn.amount > 0)
+    .reduce((sum, txn) => sum + txn.amount, 0);
+
+  const currentMonthExpenses = currentMonthTransactions.filter((txn) => txn.amount < 0);
+  const needsAmount = currentMonthExpenses.reduce((sum, txn) => {
+    const normalizedCategory = String(txn.category_name || "")
+      .trim()
+      .toLowerCase();
+
+    if (!NEEDS_CATEGORIES.has(normalizedCategory)) return sum;
+    return sum + Math.abs(txn.amount);
+  }, 0);
+  const totalSpent = Math.abs(currentMonthExpenses.reduce((sum, txn) => sum + txn.amount, 0));
+  const wantsAmount = Math.max(totalSpent - needsAmount, 0);
+  const savingsAmount = currentMonthIncome - totalSpent;
+  const percentOfIncome = (amount) => (currentMonthIncome > 0 ? (amount / currentMonthIncome) * 100 : 0);
+
+  return {
+    income: currentMonthIncome,
+    spent: totalSpent,
+    savingsAmount,
+    needs: {
+      amount: needsAmount,
+      percent: percentOfIncome(needsAmount),
+    },
+    wants: {
+      amount: wantsAmount,
+      percent: percentOfIncome(wantsAmount),
+    },
+    savings: {
+      amount: savingsAmount,
+      percent: percentOfIncome(savingsAmount),
+    },
+  };
+}
+
 function computeOverview(transactions, selectedMonth) {
   const expenses = transactions.filter((t) => t.amount < 0);
   const income = transactions.filter((t) => t.amount > 0);
@@ -73,6 +117,7 @@ function computeOverview(transactions, selectedMonth) {
   const monthCount = getMonthWindowCount();
   const currentMonth = selectedMonth || (trendRows.length ? trendRows[trendRows.length - 1].month : "");
   const previousMonth = currentMonth ? getPreviousMonth(currentMonth) : "";
+  const budgetStatus = getBudgetStatus(transactions, currentMonth);
   const categoryTrends = Object.entries(byCategoryMonth)
     .map(([name, months]) => {
       const currentAmount = months[currentMonth] || 0;
@@ -148,6 +193,7 @@ function computeOverview(transactions, selectedMonth) {
     recurringCharges,
     trend: trendRows,
     categoryTrends,
+    budgetStatus,
     monthCount,
   };
 }
