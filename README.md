@@ -30,7 +30,7 @@ npm install --prefix frontend
 4. Start both apps:
 
 ```bash
-npm run dev
+npm run dev 
 ```
 
 Frontend: `http://localhost:3000`  
