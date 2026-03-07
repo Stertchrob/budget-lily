@@ -10,13 +10,19 @@ function formatCurrency(value) {
   }).format(Number(value || 0));
 }
 
-function formatMonthLabel(month) {
+function formatYearLabel(month) {
   if (!month) return "Overview";
+  const date = new Date(`${month}-01T00:00:00`);
+  return date.toLocaleDateString("en-US", { year: "numeric" });
+}
+
+function formatMonthLabel(month) {
+  if (!month) return "Selected";
   const date = new Date(`${month}-01T00:00:00`);
   return date.toLocaleDateString("en-US", { month: "long" });
 }
 
-export default function SummaryHero({ totals, trendData, month, selectedMonth, maxMonth, onMonthChange }) {
+export default function SummaryHero({ totals, currentMonthTotals, trendData, month, selectedMonth, maxMonth, onMonthChange }) {
   const sparklineData = (trendData || []).map((item) => ({ ...item, label: item.month.slice(5) }));
 
   return (
@@ -40,22 +46,47 @@ export default function SummaryHero({ totals, trendData, month, selectedMonth, m
             ) : null}
           </div>
           <h2 className="mt-2 max-w-xl text-4xl font-semibold tracking-[-0.03em] text-[#1d1d1f] sm:text-5xl">
-            {formatMonthLabel(selectedMonth)} Cash Flow
+            {formatYearLabel(selectedMonth)} Cash Flow
           </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#6e6e73]">
+            Year-to-date totals through {formatMonthLabel(selectedMonth)}, with the selected month summary shown below.
+          </p>
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
             <div className="rounded-3xl border border-white/80 bg-white/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur">
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Spent</p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Year to date spent</p>
               <p className="mt-2 text-2xl font-semibold tracking-tight text-[#1d1d1f]">{formatCurrency(totals?.expenses)}</p>
             </div>
             <div className="rounded-3xl border border-white/80 bg-white/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur">
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Income</p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Year to date income</p>
               <p className="mt-2 text-2xl font-semibold tracking-tight text-[#1d1d1f]">{formatCurrency(totals?.income)}</p>
             </div>
             <div className="rounded-3xl border border-white/80 bg-white/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur">
-              <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Net</p>
+              <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Year to date net</p>
               <p className={`mt-2 text-2xl font-semibold tracking-tight ${totals?.netCashFlow >= 0 ? "text-[#1d1d1f]" : "text-[#ff3b30]"}`}>
                 {formatCurrency(totals?.netCashFlow)}
               </p>
+            </div>
+          </div>
+          <div className="mt-4 rounded-[28px] border border-white/80 bg-white/70 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-sm font-medium text-[#1d1d1f]">{formatMonthLabel(selectedMonth)} totals</p>
+              <p className="text-xs uppercase tracking-[0.12em] text-[#86868b]">Selected month</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-3xl bg-[#f5f5f7] p-4">
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Spent</p>
+                <p className="mt-2 text-xl font-semibold tracking-tight text-[#1d1d1f]">{formatCurrency(currentMonthTotals?.expenses)}</p>
+              </div>
+              <div className="rounded-3xl bg-[#f5f5f7] p-4">
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Income</p>
+                <p className="mt-2 text-xl font-semibold tracking-tight text-[#1d1d1f]">{formatCurrency(currentMonthTotals?.income)}</p>
+              </div>
+              <div className="rounded-3xl bg-[#f5f5f7] p-4">
+                <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Net</p>
+                <p className={`mt-2 text-xl font-semibold tracking-tight ${currentMonthTotals?.netCashFlow >= 0 ? "text-[#1d1d1f]" : "text-[#ff3b30]"}`}>
+                  {formatCurrency(currentMonthTotals?.netCashFlow)}
+                </p>
+              </div>
             </div>
           </div>
         </div>

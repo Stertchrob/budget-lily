@@ -3,7 +3,7 @@ const { v4: uuid } = require("uuid");
 const { supabaseAdmin } = require("../services/supabaseService");
 const { parseStatement } = require("../services/statementParserService");
 const { normalizeTransactions } = require("../services/transactionNormalizationService");
-const { dedupeTransactions } = require("../services/duplicateDetectionService");
+const { dedupeTransactions, filterExistingDuplicates } = require("../services/duplicateDetectionService");
 const { categorizeTransaction } = require("../services/categorizationService");
 const { getReviewedMerchantCategoryMap } = require("../services/reviewedMerchantCategoryService");
 
@@ -42,7 +42,7 @@ async function uploadStatement(req, res, next) {
       normalized.map((txn) => txn.merchant)
     );
 
-    const rows = normalized.map((txn) => {
+    const candidateRows = normalized.map((txn) => {
       const reviewedCategory = reviewedCategoryMap[txn.merchant];
       return {
         user_id: userId,
@@ -57,6 +57,12 @@ async function uploadStatement(req, res, next) {
       };
     });
 
+    const { uniqueTransactions: rows, skippedDuplicateCount } = await filterExistingDuplicates(
+      supabaseAdmin,
+      userId,
+      candidateRows
+    );
+
     if (rows.length) {
       const inserted = await supabaseAdmin.from("transactions").insert(rows);
       if (inserted.error) throw inserted.error;
@@ -66,6 +72,7 @@ async function uploadStatement(req, res, next) {
       message: "Statement uploaded and processed",
       parsedCount: parsed.length,
       insertedCount: rows.length,
+      skippedDuplicateCount,
       statementUploadId: statement.data.id,
     });
   } catch (err) {

@@ -240,6 +240,7 @@ export default function DashboardPage() {
           <div className="space-y-6">
             <SummaryHero
               totals={overview.totals}
+              currentMonthTotals={overview.currentMonthTotals}
               trendData={overview.trend}
               month={overview.month}
               selectedMonth={selectedMonth}

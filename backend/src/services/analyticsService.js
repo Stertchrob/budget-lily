@@ -20,6 +20,23 @@ function getPreviousMonth(isoMonth) {
   return date.toISOString().slice(0, 7);
 }
 
+function getMonthNetCashFlow(transactions) {
+  const income = transactions
+    .filter((txn) => txn.amount > 0)
+    .reduce((sum, txn) => sum + txn.amount, 0);
+  const expenses = Math.abs(
+    transactions
+      .filter((txn) => txn.amount < 0)
+      .reduce((sum, txn) => sum + txn.amount, 0)
+  );
+
+  return {
+    expenses,
+    income,
+    netCashFlow: income - expenses,
+  };
+}
+
 function getMonthWindowCount() {
   return 12;
 }
@@ -117,6 +134,16 @@ function computeOverview(transactions, selectedMonth) {
   const monthCount = getMonthWindowCount();
   const currentMonth = selectedMonth || (trendRows.length ? trendRows[trendRows.length - 1].month : "");
   const previousMonth = currentMonth ? getPreviousMonth(currentMonth) : "";
+  const currentYear = currentMonth ? currentMonth.slice(0, 4) : "";
+  const currentMonthTransactions = transactions.filter(
+    (txn) => String(txn.transaction_date || "").slice(0, 7) === currentMonth
+  );
+  const yearToDateTransactions = currentYear
+    ? transactions.filter((txn) => {
+      const transactionMonth = String(txn.transaction_date || "").slice(0, 7);
+      return transactionMonth.startsWith(`${currentYear}-`) && transactionMonth <= currentMonth;
+    })
+    : transactions;
   const budgetStatus = getBudgetStatus(transactions, currentMonth);
   const categoryTrends = Object.entries(byCategoryMonth)
     .map(([name, months]) => {
@@ -163,8 +190,8 @@ function computeOverview(transactions, selectedMonth) {
       amount: item.amount / monthCount,
     }))
     .slice(0, 10);
-  const totalExpenses = Math.abs(expenses.reduce((s, t) => s + t.amount, 0));
-  const totalIncome = income.reduce((s, t) => s + t.amount, 0);
+  const totals = getMonthNetCashFlow(yearToDateTransactions);
+  const currentMonthTotals = getMonthNetCashFlow(currentMonthTransactions);
   const averageContext = getYearToDateAverageContext(transactions);
   const transactionsInAverageYear = averageContext.year
     ? transactions.filter((txn) => String(txn.transaction_date || "").startsWith(`${averageContext.year}-`))
@@ -175,11 +202,8 @@ function computeOverview(transactions, selectedMonth) {
   const yearToDateIncome = incomeInAverageYear.reduce((sum, txn) => sum + txn.amount, 0);
 
   return {
-    totals: {
-      expenses: totalExpenses,
-      income: totalIncome,
-      netCashFlow: totalIncome - totalExpenses,
-    },
+    totals,
+    currentMonthTotals,
     averages: {
       spendPerMonth: yearToDateExpenses / averageContext.monthCount,
       incomePerMonth: yearToDateIncome / averageContext.monthCount,

@@ -31,19 +31,18 @@ export default function RegisterPage() {
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-10 shadow-sm">
-        <div className="mb-6 flex items-center gap-4">
-          <BrandLogo size={72} />
-          <p className="text-xl font-semibold text-[#1d1d1f]">Budget Lily</p>
+        <div className="mb-4 flex justify-center">
+          <BrandLogo size={170} className="rounded-xl" />
         </div>
-        <h1 className="mb-2 text-3xl font-semibold tracking-tight">Create account</h1>
-        <p className="mb-8 text-sm text-[#86868b]">Start tracking your spending.</p>
-        <form onSubmit={onSubmit} className="space-y-4">
-          <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} />
+        <h1 className="mb-2 text-center text-3xl font-semibold tracking-tight">Create account</h1>
+        <p className="mb-8 text-center text-sm text-[#86868b]">Start tracking your spending.</p>
+        <form onSubmit={onSubmit} className="flex flex-col items-center space-y-4">
+          <input placeholder="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full max-w-xs" />
+          <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} className="w-full max-w-xs" />
           {error ? <p className="text-sm text-[#ff3b30]">{error}</p> : null}
-          <button disabled={loading} className="btn-primary w-full">{loading ? "Creating..." : "Create account"}</button>
+          <button disabled={loading} className="btn-primary w-full max-w-xs">{loading ? "Creating..." : "Create account"}</button>
         </form>
-        <div className="mt-6 text-sm">
+        <div className="mx-auto mt-6 flex w-full max-w-xs items-center justify-start text-sm">
           <Link href="/login" className="text-[#0071e3]">Already have an account? Sign in</Link>
         </div>
       </div>
