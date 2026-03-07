@@ -17,10 +17,16 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="min-h-screen antialiased">
         <AuthProvider>
-          <header className="px-4 pt-6 pb-4">
-            <NavBar />
-          </header>
-          {children}
+          <div className="min-h-screen px-4 py-4 sm:px-5 sm:py-5">
+            <div className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-[1600px] flex-col gap-4 lg:flex-row">
+              <aside className="w-full lg:sticky lg:top-5 lg:h-[calc(100vh-2.5rem)] lg:max-w-[300px] lg:flex-none">
+                <NavBar />
+              </aside>
+              <div className="min-w-0 flex-1">
+                {children}
+              </div>
+            </div>
+          </div>
         </AuthProvider>
       </body>
     </html>

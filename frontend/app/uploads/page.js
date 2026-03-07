@@ -36,13 +36,13 @@ export default function UploadsPage() {
             <div>
               <h1 className="mt-2 text-4xl font-semibold tracking-[-0.03em] text-[#1d1d1f] sm:text-5xl">Uploads</h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-[#6e6e73]">
-                Bring in CSV or PDF statements with a cleaner, calmer import flow that matches the rest of your budget.
+                Bring in CSV statements with a cleaner, calmer import flow that matches the rest of your budget.
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
               <div className="rounded-3xl border border-white/80 bg-white/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur">
                 <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Formats</p>
-                <p className="mt-2 text-2xl font-semibold tracking-tight text-[#1d1d1f]">CSV and PDF</p>
+                <p className="mt-2 text-2xl font-semibold tracking-tight text-[#1d1d1f]">CSV</p>
               </div>
               <div className="rounded-3xl border border-white/80 bg-white/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur">
                 <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Selected File</p>
@@ -121,12 +121,12 @@ export default function UploadsPage() {
                 <label className="block cursor-pointer rounded-[28px] border border-dashed border-[#d2d2d7] bg-white px-5 py-8 text-center transition hover:border-[#0071e3]/40 hover:bg-[#fbfbfd]">
                   <input
                     type="file"
-                    accept=".csv,.pdf,text/csv,application/pdf"
+                    accept=".csv,text/csv"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                     className="sr-only"
                   />
                   <p className="text-base font-semibold text-[#1d1d1f]">
-                    {file ? file.name : "Choose a CSV or PDF file"}
+                    {file ? file.name : "Choose a CSV file"}
                   </p>
                   <p className="mt-2 text-sm text-[#6e6e73]">
                     {file ? "Click to replace the selected file." : "Tap here to browse your computer and import a statement."}
@@ -141,7 +141,7 @@ export default function UploadsPage() {
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-[#6e6e73]">
-                  Supports bank statements in CSV and PDF formats.
+                  Supports bank statements in CSV format.
                 </p>
                 <button className="btn-primary px-5 py-2.5" disabled={!hasFile || loading}>
                   {loading ? "Uploading..." : "Upload and process"}

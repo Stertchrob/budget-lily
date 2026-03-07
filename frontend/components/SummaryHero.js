@@ -13,7 +13,7 @@ function formatCurrency(value) {
 function formatMonthLabel(month) {
   if (!month) return "Overview";
   const date = new Date(`${month}-01T00:00:00`);
-  return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  return date.toLocaleDateString("en-US", { month: "long" });
 }
 
 export default function SummaryHero({ totals, trendData, month, selectedMonth, maxMonth, onMonthChange }) {
@@ -40,11 +40,8 @@ export default function SummaryHero({ totals, trendData, month, selectedMonth, m
             ) : null}
           </div>
           <h2 className="mt-2 max-w-xl text-4xl font-semibold tracking-[-0.03em] text-[#1d1d1f] sm:text-5xl">
-            A calmer view of how your money moved.
+            {formatMonthLabel(selectedMonth)} Cash Flow
           </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#6e6e73]">
-            See your spending patterns, strongest categories, and overall cash flow in a layout inspired by Apple's summary screens.
-          </p>
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
             <div className="rounded-3xl border border-white/80 bg-white/80 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur">
               <p className="text-xs font-medium uppercase tracking-[0.16em] text-[#86868b]">Spent</p>
