@@ -12,10 +12,38 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const merchantAliasRoutes = require("./routes/merchantAliasRoutes");
 const { notFoundHandler, errorHandler } = require("./middleware/errorMiddleware");
 
+const allowedOrigins = new Set(
+  String(process.env.FRONTEND_ORIGIN || "http://localhost:3000")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+  if (allowedOrigins.has(origin)) return true;
+
+  if (process.env.ALLOW_VERCEL_PREVIEWS === "true") {
+    try {
+      const url = new URL(origin);
+      if (url.protocol === "https:" && url.hostname.endsWith(".vercel.app")) {
+        return true;
+      }
+    } catch {
+      return false;
+    }
+  }
+
+  return false;
+}
+
 const app = express();
 app.use(
   cors({
-    origin: process.env.FRONTEND_ORIGIN || "http://localhost:3000",
+    origin(origin, callback) {
+      if (isAllowedOrigin(origin)) return callback(null, true);
+      return callback(new Error(`Origin not allowed by CORS: ${origin || "unknown"}`));
+    },
     credentials: true,
   })
 );
