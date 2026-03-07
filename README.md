@@ -27,7 +27,7 @@ npm install --prefix frontend
 
 - `docs/schema.sql`
 
-4. Start both apps:
+4. Start both apps: 
 
 ```bash
 npm run dev 
