@@ -20,7 +20,10 @@ export default function UploadsPage() {
     formData.append("statementType", statementType);
     try {
       const response = await apiPost("/uploads/statements", formData, true);
-      setMessage(`Uploaded. Parsed ${response.parsedCount}, inserted ${response.insertedCount}.`);
+      const skippedDuplicates = Number(response.skippedDuplicateCount || 0);
+      setMessage(
+        `Uploaded. Parsed ${response.parsedCount}, inserted ${response.insertedCount}, skipped ${skippedDuplicates} duplicate${skippedDuplicates === 1 ? "" : "s"}.`
+      );
     } catch (err) {
       setMessage(err.message);
     } finally {
