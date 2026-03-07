@@ -2,14 +2,16 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../lib/supabaseClient";
+import { useAuth } from "../components/AuthProvider";
 
 export default function HomePage() {
   const router = useRouter();
+  const { user, loading } = useAuth();
+
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      router.replace(data.user ? "/dashboard" : "/login");
-    });
-  }, [router]);
+    if (loading) return;
+    router.replace(user ? "/dashboard" : "/login");
+  }, [loading, router, user]);
+
   return <div className="flex min-h-screen items-center justify-center text-[#86868b]">Loading...</div>;
 }

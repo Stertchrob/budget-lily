@@ -1,4 +1,6 @@
 import { supabase } from "./supabaseClient";
+import { getDemoResponse } from "./demoData";
+import { isDemoMode } from "./demoMode";
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
@@ -10,6 +12,15 @@ async function getAccessToken() {
 
 async function request(path, options = {}) {
   if (!baseUrl) throw new Error("NEXT_PUBLIC_API_BASE_URL is not configured");
+  const method = String(options.method || "GET").toUpperCase();
+
+  if (isDemoMode()) {
+    if (method !== "GET") {
+      throw new Error(path.startsWith("/uploads/") ? "Uploads are disabled in Explore mode." : "Explore mode is read-only.");
+    }
+    return getDemoResponse(path);
+  }
+
   const token = await getAccessToken();
   if (!token) throw new Error("Session expired. Please sign in again.");
 

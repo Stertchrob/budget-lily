@@ -15,7 +15,7 @@ const links = [
 
 export default function NavBar() {
   const pathname = usePathname();
-  const { user, loading, signOut } = useAuth();
+  const { user, loading, isDemo, signOut } = useAuth();
 
   function linkClass(href) {
     const active = pathname === href;
@@ -36,6 +36,9 @@ export default function NavBar() {
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#86868b]">Budget</p>
           <p className="text-sm font-semibold tracking-tight text-[#1d1d1f]">Lily</p>
+          {isDemo ? (
+            <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.14em] text-[#0071e3]">Explore Mode</p>
+          ) : null}
         </div>
       </Link>
       {!loading && (
@@ -57,7 +60,7 @@ export default function NavBar() {
                 onClick={signOut}
                 className="mt-auto w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-[#6e6e73] transition-all duration-200 hover:bg-white/70 hover:text-[#1d1d1f]"
               >
-                Sign out
+                {isDemo ? "Exit demo" : "Sign out"}
               </button>
             </>
           ) : (
