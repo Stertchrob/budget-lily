@@ -19,7 +19,7 @@ jobs:
 
       - name: Deploy backend service
         working-directory: backend
-        run: railway up --service "${{ secrets.RAILWAY_SERVICE }}" --ci
+        run: railway up --service "${{ secrets.RAILWAY_SERVICE }}" --detach
 
   deploy-frontend:
     name: Deploy Frontend to Vercel
