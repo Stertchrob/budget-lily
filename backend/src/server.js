@@ -9,7 +9,7 @@ process.on("unhandledRejection", (reason) => {
 
 const app = require("./app");
 
-const port = process.env.BACKEND_PORT || 4000;
+const port = process.env.PORT || process.env.BACKEND_PORT || 4000;
 app.listen(port, "0.0.0.0", () => {
   // eslint-disable-next-line no-console
   console.log(`Backend running on port ${port}`);
