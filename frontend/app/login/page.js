@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 import BrandLogo from "../../components/BrandLogo";
+import { useAuth } from "../../components/AuthProvider";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -12,6 +13,11 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
+  const { user, startDemo } = useAuth();
+
+  useEffect(() => {
+    if (user) router.replace("/dashboard");
+  }, [router, user]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -29,6 +35,11 @@ export default function LoginPage() {
     setError(resetError ? resetError.message : "Reset email sent.");
   }
 
+  async function onExplore() {
+    setError("");
+    await startDemo();
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-10 shadow-sm">
@@ -42,6 +53,13 @@ export default function LoginPage() {
           <input placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full max-w-xs" />
           {error ? <p className="text-sm text-[#ff3b30]">{error}</p> : null}
           <button disabled={loading} className="btn-primary w-full max-w-xs">{loading ? "Signing in..." : "Sign in"}</button>
+          <button
+            type="button"
+            onClick={onExplore}
+            className="w-full max-w-xs rounded-lg border border-[#d2d2d7] bg-white px-4 py-2 font-medium text-[#1d1d1f] transition hover:bg-[#f5f5f7]"
+          >
+            Explore demo
+          </button>
         </form>
         <div className="mx-auto mt-6 flex w-full max-w-xs items-center justify-between text-sm">
           <Link className="text-[#0071e3]" href="/register">Create account</Link>

@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import ProtectedRoute from "../../components/ProtectedRoute";
+import { useAuth } from "../../components/AuthProvider";
 import { apiPost } from "../../lib/apiClient";
 
 export default function UploadsPage() {
@@ -8,10 +9,15 @@ export default function UploadsPage() {
   const [statementType, setStatementType] = useState("debit");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const hasFile = Boolean(file);
+  const { isDemo } = useAuth();
+  const hasFile = Boolean(file) && !isDemo;
 
   async function onUpload(e) {
     e.preventDefault();
+    if (isDemo) {
+      setMessage("Uploads are disabled in Explore mode.");
+      return;
+    }
     if (!file) return;
     setLoading(true);
     setMessage("");
@@ -62,6 +68,11 @@ export default function UploadsPage() {
             {message}
           </div>
         ) : null}
+        {isDemo ? (
+          <div className="mb-6 rounded-2xl border border-[#d8e7ff] bg-[#f5f9ff] px-4 py-3 text-sm text-[#1d1d1f] shadow-[0_10px_30px_rgba(0,113,227,0.06)]">
+            Explore mode uses example data. Uploading transactions is disabled until you sign in with a real account.
+          </div>
+        ) : null}
 
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <section className="rounded-[28px] border border-white/70 bg-white/80 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)] backdrop-blur">
@@ -91,6 +102,7 @@ export default function UploadsPage() {
                       value="debit"
                       checked={statementType === "debit"}
                       onChange={() => setStatementType("debit")}
+                      disabled={isDemo}
                       className="sr-only"
                     />
                     <p className="text-sm font-semibold">Debit account</p>
@@ -109,6 +121,7 @@ export default function UploadsPage() {
                       value="credit"
                       checked={statementType === "credit"}
                       onChange={() => setStatementType("credit")}
+                      disabled={isDemo}
                       className="sr-only"
                     />
                     <p className="text-sm font-semibold">Credit card</p>
@@ -126,13 +139,16 @@ export default function UploadsPage() {
                     type="file"
                     accept=".csv,text/csv"
                     onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    disabled={isDemo}
                     className="sr-only"
                   />
                   <p className="text-base font-semibold text-[#1d1d1f]">
-                    {file ? file.name : "Choose a CSV file"}
+                    {file ? file.name : (isDemo ? "Uploads disabled in demo" : "Choose a CSV file")}
                   </p>
                   <p className="mt-2 text-sm text-[#6e6e73]">
-                    {file ? "Click to replace the selected file." : "Tap here to browse your computer and import a statement."}
+                    {file
+                      ? "Click to replace the selected file."
+                      : (isDemo ? "Sign in to upload your own statements." : "Tap here to browse your computer and import a statement.")}
                   </p>
                   {file ? (
                     <p className="mt-4 inline-flex rounded-full bg-[#f5f5f7] px-3 py-1 text-xs font-medium text-[#86868b]">
@@ -147,7 +163,7 @@ export default function UploadsPage() {
                   Supports bank statements in CSV format.
                 </p>
                 <button className="btn-primary px-5 py-2.5" disabled={!hasFile || loading}>
-                  {loading ? "Uploading..." : "Upload and process"}
+                  {isDemo ? "Uploads disabled in demo" : (loading ? "Uploading..." : "Upload and process")}
                 </button>
               </div>
             </form>
