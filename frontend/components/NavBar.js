@@ -29,16 +29,9 @@ export default function NavBar() {
 
   return (
     <nav className="flex h-full w-full flex-col gap-4 rounded-[28px] border border-white/70 bg-[rgba(250,250,252,0.72)] p-4 shadow-[0_18px_50px_rgba(15,23,42,0.08)] backdrop-blur-xl">
-      <Link href={user ? "/dashboard" : "/login"} className="flex min-w-0 items-center gap-3 rounded-[24px] px-2 py-1 transition hover:bg-white/60">
-        <div className="rounded-2xl bg-white/90 p-1.5 shadow-[0_8px_20px_rgba(15,23,42,0.08)]">
-          <BrandLogo size={48} className="rounded-xl sm:h-14 sm:w-14" />
-        </div>
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#86868b]">Budget</p>
-          <p className="text-sm font-semibold tracking-tight text-[#1d1d1f]">Lily</p>
-          {isDemo ? (
-            <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.14em] text-[#0071e3]">Explore Mode</p>
-          ) : null}
+      <Link href={user ? "/dashboard" : "/login"} className="flex min-w-0 items-center justify-center rounded-[24px] px-3 py-3 transition hover:bg-white/60">
+        <div className="rounded-2xl bg-white/90 p-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.08)]">
+          <BrandLogo size={56} className="rounded-xl" />
         </div>
       </Link>
       {!loading && (

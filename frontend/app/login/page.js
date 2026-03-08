@@ -44,7 +44,7 @@ export default function LoginPage() {
     <main className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-10 shadow-sm">
         <div className="mb-4 flex justify-center">
-          <BrandLogo size={170} className="rounded-xl" />
+          <BrandLogo size={120} className="rounded-xl" />
         </div>
         <h1 className="mb-2 text-center text-3xl font-semibold tracking-tight">Welcome back</h1>
         <p className="mb-8 text-center text-sm text-[#86868b]">Sign in to continue.</p>
