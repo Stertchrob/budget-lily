@@ -6,9 +6,9 @@ export const metadata = {
   title: "Budget Lily",
   description: "Budgeting and spending analysis app",
   icons: {
-    icon: "/budget-lily.png",
-    shortcut: "/budget-lily.png",
-    apple: "/budget-lily.png",
+    icon: "/budget-lily.png?v=2",
+    shortcut: "/budget-lily.png?v=2",
+    apple: "/budget-lily.png?v=2",
   },
 };
 
